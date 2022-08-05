@@ -1,20 +1,13 @@
 FROM alpine:latest
 
-RUN mkdir -p /opt
-
 USER root
-WORKDIR /src/app
+WORKDIR /app
 
-COPY package.json /src/app
-RUN yum -y update
-RUN yum -y install java-11-openjdk-devel
-RUN yum -y install nodejs
-RUN npm install -g nodemon
-RUN npm i mongoose
-#RUN yum install -y mongodb-org
-COPY . /src/app
-#COPY app.jar /opt/app.jar
+COPY package.json /app
+RUN apk add --no-cache nodejs npm
+RUN npm install
+
+COPY . /app
 
 EXPOSE 8080
-CMD [ "node", "app.js" ]
-#"sh", "-c", "java -jar /opt/app.jar",
+CMD [ "node", "/app/app.js" ]
