@@ -1,18 +1,20 @@
 FROM alpine:latest
 
-EXPOSE 8080
 RUN mkdir -p /opt
-USER root
 
+USER root
+WORKDIR /src/app
+
+COPY package.json /src/app
 RUN yum -y update
 RUN yum -y install java-11-openjdk-devel
-RUN yum install nodejs
+RUN yum -y install nodejs
 RUN npm install -g nodemon
 RUN npm i mongoose
 #RUN yum install -y mongodb-org
+COPY . /src/app
+#COPY app.jar /opt/app.jar
 
-COPY dist/app.jar /opt/app.jar
-
-#WORKDIR /home
-
-CMD [ "sh", "-c", "java -jar /opt/app.jar" ]
+EXPOSE 8080
+CMD [ "node", "app.js" ]
+#"sh", "-c", "java -jar /opt/app.jar",
