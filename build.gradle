@@ -2,32 +2,20 @@ plugins {
      id "com.github.node-gradle.node" version "3.1.1"
 }
 
-plugins {
-    id 'java'
-}
-
-jar {
-    manifest {
-        attributes(
-                'Main-Class': './src/app.js'
-        )
-    }
-}
-
 node {
   download = true
 }
+task build
 
-
-    task jarcreation(type: Jar) {
+    task zip(type: Zip) {
         from ('.') {
 		    include "*"
 	    }
 	    destinationDir(file("."))
 	    baseName "app"
     }
-    build.dependsOn jarcreation
-    jarcreation.dependsOn npm_build
+    build.dependsOn zip
+    zip.dependsOn npm_build
 
 build.dependsOn npm_build
 npm_build.dependsOn npmInstall
