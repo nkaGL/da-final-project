@@ -7,7 +7,12 @@ COPY package.json /app
 RUN apk add --no-cache nodejs npm
 RUN npm install
 
-COPY . /app
+COPY . .
+
+# na instancji odpalic obrazy dockerowe. ale gdzie i jak pushowac?
+#RUN   docker pull mongo
+#RUN    docker run -it --rm -d --name mongo -p 27017:27017 mongo
+#RUN    docker run -it --rm -d --name webapp -p 8080:8080 --net host public.ecr.aws/n2x7h9r6/todowebapp:local
 
 EXPOSE 8080
 CMD [ "node", "/app/app.js" ]
