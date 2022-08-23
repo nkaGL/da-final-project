@@ -51,7 +51,7 @@ resource "aws_instance" "jenkins" {
     sudo systemctl enable jenkins
     sudo systemctl start jenkins
     sudo systemctl status jenkins
-    
+    sudo ./scripts/test.sh
   EOF
 
    tags = {
