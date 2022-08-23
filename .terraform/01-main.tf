@@ -9,6 +9,12 @@ terraform {
       version = "4.23.0"
     }
   }
+  # backend "s3" {
+  #   bucket  = "terraformstate-ninagl2022"
+  #   key     = "global/s3/terraform.tfstate"
+  #   region  = "eu-west-1"
+  #   encrypt = true
+  # }
 }
 
 provider "aws" {
