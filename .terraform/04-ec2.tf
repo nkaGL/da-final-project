@@ -41,6 +41,7 @@ resource "aws_instance" "jenkins" {
   user_data = <<-EOF
     #!/bin/bash -xe
     sudo yum update –y
+    sudo yum install git -y
     sudo wget -O /etc/yum.repos.d/jenkins.repo \
       https://pkg.jenkins.io/redhat-stable/jenkins.repo
     sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
@@ -50,7 +51,7 @@ resource "aws_instance" "jenkins" {
     sudo systemctl enable jenkins
     sudo systemctl start jenkins
     sudo systemctl status jenkins
-
+    
   EOF
 
    tags = {
