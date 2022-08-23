@@ -51,7 +51,8 @@ resource "aws_instance" "jenkins" {
     sudo systemctl enable jenkins
     sudo systemctl start jenkins
     sudo systemctl status jenkins
-    
+    git clone https://github.com/nkaGL/da-final-project.git
+    sudo ./da-final-project/scripts/jenkins_init.sh
   EOF
 
    tags = {
