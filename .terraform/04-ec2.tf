@@ -12,16 +12,49 @@ resource "aws_instance" "webapp" {
 
     user_data = <<-EOF
     #!/bin/bash -xe
-    sudo yum update -y
-    sudo amazon-linux-extras install docker
-    sudo service docker start
-    sudo systemctl enable docker
-    sudo usermod -a -G docker ec2-user
-    sudo shutdown -r now
+    sudo su
+    yum update -y
+    amazon-linux-extras install docker -y
+    service docker start
+    systemctl enable docker
+    usermod -a -G docker ec2-user
+    docker pull mongo
+    docker run -it --rm -d --name mongo -p 27017:27017 mongo
+    docker login -unina.rojanek@globallogic.com -p Nin@2022 ninagl.jfrog.io
+    docker run -it --rm -d --name webapp -p 8080:8080 --net host ninagl.jfrog.io/project-docker-local/webapp:latest
     EOF
 
    tags = {
     Name = "Todo-App"
+  }
+}
+
+resource "aws_instance" "jenkins" {
+  ami = "ami-089950bc622d39ed8"
+  instance_type = "t2.micro"
+  key_name = aws_key_pair.deployer.key_name
+
+  # lifecycle {
+  #       prevent_destroy = true
+  #   }
+
+  user_data = <<-EOF
+    #!/bin/bash -xe
+    sudo yum update –y
+    sudo wget -O /etc/yum.repos.d/jenkins.repo \
+      https://pkg.jenkins.io/redhat-stable/jenkins.repo
+    sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+    sudo yum upgrade -y
+    sudo amazon-linux-extras install java-openjdk11 -y
+    sudo yum install jenkins -y
+    sudo systemctl enable jenkins
+    sudo systemctl start jenkins
+    sudo systemctl status jenkins
+
+  EOF
+
+   tags = {
+    Name = "Jenkins"
   }
 }
 
