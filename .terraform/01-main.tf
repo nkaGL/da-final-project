@@ -9,7 +9,7 @@ terraform {
       version = "4.23.0"
     }
   }
-  # backend "s3" {
+  # backend "s3" {   #stworzyc s3 MANUALNIE PRZED PIPELINEM
   #   bucket  = "terraformstate-ninagl2022"
   #   key     = "global/s3/terraform.tfstate"
   #   region  = "eu-west-1"
