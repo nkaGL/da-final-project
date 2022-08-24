@@ -40,17 +40,21 @@ resource "aws_instance" "jenkins" {
 
   user_data = <<-EOF
     #!/bin/bash -xe
-    sudo yum update –y
-    sudo yum install git -y
-    sudo wget -O /etc/yum.repos.d/jenkins.repo \
+    sudo su
+    yum update -y
+    amazon-linux-extras install docker -y
+    service docker start
+    systemctl enable docker
+    yum install git -y
+    wget -O /etc/yum.repos.d/jenkins.repo \
       https://pkg.jenkins.io/redhat-stable/jenkins.repo
-    sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
-    sudo yum upgrade -y
-    sudo amazon-linux-extras install java-openjdk11 -y
-    sudo yum install jenkins -y
-    sudo systemctl enable jenkins
-    sudo systemctl start jenkins
-    sudo systemctl status jenkins
+    rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+    yum upgrade -y
+    amazon-linux-extras install java-openjdk11 -y
+    yum install jenkins -y
+    systemctl enable jenkins
+    systemctl start jenkins
+    systemctl status jenkins
     git clone https://github.com/nkaGL/da-final-project.git
     sudo ./da-final-project/scripts/jenkins_init.sh
   EOF
