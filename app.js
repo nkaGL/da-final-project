@@ -54,7 +54,7 @@ const defaultItems = [item1, item2];
       }
     });
   });
-
+  
   app.get("/:customListName", function(req, res){
     const customListName = _.capitalize(req.params.customListName);
   
