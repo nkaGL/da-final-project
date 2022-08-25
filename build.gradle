@@ -7,8 +7,12 @@ node {
 }
 task build
 
+task unittests {
+  println "The placeholder for unit tests gradle run."
+}
+
     task zip(type: Zip) {
-        from ('.') {
+        from (".") {
 		    include "*"
 	    }
 	    destinationDir(file("."))
@@ -18,5 +22,6 @@ task build
     zip.dependsOn npm_build
 
 build.dependsOn npm_build
+unittests.dependsOn npm_test
 npm_build.dependsOn npmInstall
 npm_test.dependsOn npmInstall
