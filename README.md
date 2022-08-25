@@ -58,3 +58,4 @@ terraform destroy
 - Kubernetes Cluster -  to avoid accidentaly inaccessibility of EC2 instance with WebApp
 - MongoDB outside the EC2 instance to let data be saved somethere else (propositions: AWS documentDB or MongoDB Alas solution)
 
+### [Project Stack Presentation](https://github.com/nkaGL/da-final-project/wiki/Project-Stack-Presentation)
