@@ -8,7 +8,9 @@ node {
 task build
 
 task unittests {
-  println "The placeholder for unit tests gradle run."
+
+  println "The placeholder for unit tests gradle run"
+
 }
 
     task zip(type: Zip) {
