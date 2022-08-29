@@ -1,0 +1,115 @@
+pipeline {
+    agent { label 'aws-agent' }
+    environment {
+                AWS_ACCESS_KEY_ID = credentials('access-key')
+                AWS_SECRET_ACCESS_KEY = credentials('secret-key')
+                ARTIFACTORY_USER = credentials('jfrog-user')
+                ARTIFACTORY_PASSWORD = credentials('jfrog-password')
+                ARTIFACTORY_SERVER = credentials('jfrog-server')
+    }
+    stages {
+        stage('Initialization') {
+            steps {
+                sh '''
+                sudo yum update -y
+                sudo amazon-linux-extras install docker -y
+                sudo systemctl enable docker
+                sudo service docker start
+                
+                DIR="/home/ec2-user/workspace/demo-pipeline/dev"
+                if [ -d "$DIR" ]
+                then
+                    cd $DIR
+                else
+                    cd /home/ec2-user/workspace/demo-pipeline/
+                    mkdir dev
+                    cd dev
+                fi
+                
+                wget https://releases.hashicorp.com/terraform/1.2.8/terraform_1.2.8_linux_amd64.zip
+                unzip terraform_1.2.8_linux_amd64.zip
+                rm terraform_1.2.8_linux_amd64.zip
+                sudo mv terraform /usr/bin
+                
+                REPO="/home/ec2-user/workspace/demo-pipeline/dev/da-final-project"
+                if [ -d "$REPO" ]
+                then
+                    cd $REPO
+                    cd ..
+                    rm -rf da-final-project
+                fi
+                cd /home/ec2-user/workspace/demo-pipeline/dev
+                git clone https://github.com/nkaGL/da-final-project.git
+                cd da-final-project
+
+                git checkout dev
+                git pull
+                '''
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                sh '''
+                cd /home/ec2-user/workspace/demo-pipeline/dev/da-final-project
+                ./gradlew build
+                '''
+            }
+        }
+        stage('Tests') {
+            steps {
+                sh '''
+                cd /home/ec2-user/workspace/demo-pipeline/dev/da-final-project
+                echo "integration tests performance"
+                echo "opensource tests performance"
+                '''
+            }
+        }
+        stage('Static Code Analysis') {
+            steps {
+                sh '''
+                cd /home/ec2-user/workspace/demo-pipeline/dev/da-final-project
+                echo "sonarcloud or sonarcube tests"
+                ''' 
+            }
+        }
+        stage('Dockerization') {
+            steps {
+                sh '''
+                cd /home/ec2-user/workspace/demo-pipeline/dev/da-final-project
+                now=$(date +"%d%m%Y")
+                BUILD_NAME=$now"-jenkins-build-dev"
+                sudo docker login -u$ARTIFACTORY_USER -p $ARTIFACTORY_PASSWORD $ARTIFACTORY_SERVER
+                sudo docker build -t $BUILD_NAME .
+                IMAGE_ID=$(sudo docker images | grep -i $BUILD_NAME | awk '{ print $3 }')
+                sudo docker tag $IMAGE_ID $ARTIFACTORY_SERVER/ninagl-docker-dev-local/dev/webapp:latest
+                sudo docker push $ARTIFACTORY_SERVER/ninagl-docker-dev-local/dev/webapp:latest
+                '''
+            }
+        }
+        
+        stage('Deploy To AWS') {
+            steps {
+                sh '''
+                cd /home/ec2-user/workspace/demo-pipeline/dev/da-final-project/.terraform
+                terraform init
+                terraform apply -auto-approve
+                dev-webapp_public_ip=$(terraform output -raw dev-webapp_public_ip)
+
+                ssh -oStrictHostKeyChecking=no $dev-webapp_public_ip uptime
+                ssh $dev-webapp_public_ip
+                sudo docker pull mongo
+                sudo docker run -it --rm -d --name mongo -p 27017:27017 mongo
+                sudo docker login -u $ARTIFACTORY_USER -p $ARTIFACTORY_PASSWORD $ARTIFACTORY_SERVER
+                sudo docker run -it --rm -d --name webapp -p 8080:8080 --net host $ARTIFACTORY_SERVER/project-docker-local/dev/webapp:latest
+                exit
+                
+                
+                sleep 300
+                terraform destroy -auto-approve
+                '''
+                
+            }
+        }
+    }
+}
