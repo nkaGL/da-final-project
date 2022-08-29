@@ -8,7 +8,7 @@ pipeline {
                 ARTIFACTORY_SERVER = credentials('jfrog-server')
     }
     stages {
-        stage('Initialization') {
+        stage('Agent Initialization') {
             steps {
                 sh '''
                 sudo yum update -y

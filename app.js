@@ -49,7 +49,7 @@ const defaultItems = [item1, item2];
         });
         res.redirect("/");
       } else {
-        res.render("list", {listTitle: "To Do", newListItems: foundItems});
+        res.render("list", {listTitle: "Today", newListItems: foundItems});
       }
     });
   });
