@@ -3,7 +3,6 @@ resource "aws_instance" "webapp-prod" {
   ami = "ami-089950bc622d39ed8"
   instance_type = "t2.micro"
   key_name = "demo-key"
-  security_groups = [aws_security_group.projectprod-sg.name]
 
     user_data = <<-EOF
     #!/bin/bash -xe
