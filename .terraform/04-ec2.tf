@@ -1,27 +1,3 @@
-# Instance EC2
-resource "aws_instance" "webapp-dev" {
-  ami = "ami-089950bc622d39ed8"
-  instance_type = "t2.micro"
-  key_name = "demo-key"
-  security_groups = [aws_security_group.projectdev-sg.name]
-
-    user_data = <<-EOF
-    #!/bin/bash -xe
-    sudo su
-    yum update -y
-    amazon-linux-extras install docker -y
-    service docker start
-    systemctl enable docker
-    usermod -a -G docker ec2-user
-    shutdown -r -f
-
-    EOF
-
-   tags = {
-    Name = "Todo-App"
-  }
-}
-
 # Security Group
 resource "aws_security_group" "projectdev-sg" {
   name        = "projectdev-SG"
@@ -57,3 +33,23 @@ resource "aws_security_group_rule" "projectdev-SG-all-egress" {
   description       = "Allows all outbound traffic"
 }
 
+# Instance
+resource "aws_instance" "webapp-dev" {
+  ami = "ami-089950bc622d39ed8"
+  instance_type = "t2.micro"
+  key_name = "demo-key"
+
+    user_data = <<-EOF
+    #!/bin/bash -xe
+    sudo su
+    yum update -y
+    amazon-linux-extras install docker -y
+    service docker start
+    systemctl enable docker
+    usermod -a -G docker ec2-user
+    EOF
+
+   tags = {
+    Name = "Todo-App-Dev"
+  }
+}
