@@ -16,8 +16,7 @@ mongoose.connect("mongodb://localhost:27017/todolistDB", {useNewUrlParser: true}
 //mongoose.connect("mongodb+srv://ninaro:Test-123@clustertodo.haowzbs.mongodb.net/todolistDB", {useNewUrlParser: true});
 
 //mongoose.connect("mongodb://ninaro:Test-123@docdb-2022-08-08-21-13-58.cluster-ce6w7hpdusy3.eu-central-1.docdb.amazonaws.com:27017/", {useNewUrlParser: true, useUnifiedTopology: true});
-//mongoose.connect("mongodb://ninaro:Test-123@docdb-2022-08-08-21-13-58.ce6w7hpdusy3.eu-central-1.docdb.amazonaws.com:27017/?ssl=true&ssl_ca_certs=rds-combined-ca-bundle.pem&retryWrites=false",
-//{tlsCAFile: `/aws-cert/rds-combined-ca-bundle.pem`});
+//mongoose.connect("mongodb://ninaro:Test-123@docdb-2022-08-08-21-13-58.ce6w7hpdusy3.eu-central-1.docdb.amazonaws.com:27017/?ssl=true&ssl_ca_certs=rds-combined-ca-bundle.pem&retryWrites=false", {tlsCAFile: `/aws-cert/rds-combined-ca-bundle.pem`});
 
 const itemsSchema = { name: String };
 const Item = mongoose.model("Item", itemsSchema);
