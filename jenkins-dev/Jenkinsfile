@@ -8,7 +8,7 @@ pipeline {
                 ARTIFACTORY_SERVER = credentials('jfrog-server')
     }
     stages {
-        stage('Initialization') {
+        stage('Agent Initialization') {
             steps {
                 sh '''
                 sudo yum update -y
@@ -94,21 +94,17 @@ pipeline {
                 cd /home/ec2-user/workspace/demo-pipeline/dev/da-final-project/.terraform
                 terraform init
                 terraform apply -auto-approve
-                dev-webapp_public_ip=$(terraform output -raw dev-webapp_public_ip)
-
-                ssh -oStrictHostKeyChecking=no $dev-webapp_public_ip uptime
-                ssh $dev-webapp_public_ip
-                sudo docker pull mongo
-                sudo docker run -it --rm -d --name mongo -p 27017:27017 mongo
-                sudo docker login -u $ARTIFACTORY_USER -p $ARTIFACTORY_PASSWORD $ARTIFACTORY_SERVER
-                sudo docker run -it --rm -d --name webapp -p 8080:8080 --net host $ARTIFACTORY_SERVER/project-docker-local/dev/webapp:latest
-                exit
-                
-                
-                sleep 300
-                terraform destroy -auto-approve
                 '''
-                
+                // DEV_IP=$(terraform output -raw dev-webapp_public_ip)
+                // echo "ssh connection with new instance $DEV_IP"
+                // ssh -oStrictHostKeyChecking=no $dev-webapp_public_ip uptime
+                // ssh $dev-webapp_public_ip
+                // sudo docker pull mongo
+                // sudo docker run -it --rm -d --name mongo -p 27017:27017 mongo
+                // sudo docker login -u $ARTIFACTORY_USER -p $ARTIFACTORY_PASSWORD $ARTIFACTORY_SERVER
+                // sudo docker run -it --rm -d --name webapp -p 8080:8080 --net host $ARTIFACTORY_SERVER/ninagl-docker-dev-local/dev/webapp:latest
+                // exit
+                // '''
             }
         }
     }
